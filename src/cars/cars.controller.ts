@@ -3,12 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
-  Res,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
 import { Car, CarDto } from './repository/cars.model';
@@ -18,7 +15,6 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Response } from 'express';
 import { ValidateIdExistsPipe } from 'src/decorators/id.validation.pipe';
 
 @ApiTags('Cars')
@@ -30,34 +26,24 @@ export class CarsController {
     description: 'This endpoint to find all the cars.',
   })
   @Get()
-  async getAllCars(@Res() res: Response) {
-    const cars: Car[] = await this.carsService.getAllCars();
-    return res
-      .status(HttpStatus.OK)
-      .json({ data: cars, message: 'All cars!', error: false });
+  async getAllCars(): Promise<Car[]> {
+    return this.carsService.getAllCars();
   }
 
   @ApiOkResponse({
     description: 'This endpoint to find car by id.',
   })
   @Get(':id')
-  async getById(@Param('id') id: string, @Res() res: Response) {
-    const car: Car = await this.carsService.getById(id);
-    return res
-      .status(HttpStatus.OK)
-      .json({ data: car, message: 'Car!', error: false });
+  async getById(@Param('id') id: string): Promise<Car> {
+    return this.carsService.getById(id);
   }
 
   @ApiCreatedResponse({
     description: 'This endpoint to create a new car.',
   })
-  @UsePipes(new ValidationPipe())
   @Post('create')
-  async createCar(@Body() createCarDto: CarDto, @Res() res: Response) {
-    const car: Car = await this.carsService.createCar(createCarDto);
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ data: car, message: 'A new car was created!', error: false });
+  async createCar(@Body() createCarDto: CarDto) {
+    return await this.carsService.createCar(createCarDto);
   }
 
   @ApiNoContentResponse({
@@ -65,8 +51,7 @@ export class CarsController {
   })
   @UsePipes(ValidateIdExistsPipe)
   @Delete(':id')
-  async deleteCar(@Param('id') id: string, @Res() res: Response) {
-    await this.carsService.deleteCar(id);
-    return res.status(HttpStatus.NO_CONTENT).json();
+  async deleteCar(@Param('id') id: string): Promise<void> {
+    return this.carsService.deleteCar(id);
   }
 }

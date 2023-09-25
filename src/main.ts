@@ -6,7 +6,13 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      whitelist: true,
+    }),
+  );
   useSwagger(app);
   await app.listen(process.env.PORT);
   Logger.log(`server listning http://${process.env.HOST}:${process.env.PORT}`);
