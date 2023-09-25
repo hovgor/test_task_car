@@ -44,7 +44,7 @@ export class CarsController {
   })
   @Post('create')
   async createCar(@Body() createCarDto: CarDto) {
-    return await this.carsService.createCar(createCarDto);
+    return this.carsService.createCar(createCarDto);
   }
 
   @ApiNoContentResponse({
