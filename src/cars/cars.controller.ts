@@ -15,7 +15,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ValidateIdExistsPipe } from 'src/decorators/id.validation.pipe';
+import { ValidateIdExistsPipe } from 'src/pipes/id.validation.pipe';
 
 @ApiTags('Cars')
 @Controller('cars')
@@ -33,6 +33,7 @@ export class CarsController {
   @ApiOkResponse({
     description: 'This endpoint to find car by id.',
   })
+  @UsePipes(ValidateIdExistsPipe)
   @Get(':id')
   async getById(@Param('id') id: string): Promise<Car> {
     return this.carsService.getById(id);
